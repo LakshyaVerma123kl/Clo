@@ -115,7 +115,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({
           className="text-5xl sm:text-6xl font-extrabold bg-gradient-to-r from-pink-300 to-violet-300 bg-clip-text text-transparent select-none"
           tabIndex={-1}
         >
-          Hey Beautiful 💕
+          Hey Cutie 💕
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
