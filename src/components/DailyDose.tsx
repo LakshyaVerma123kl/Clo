@@ -1,4 +1,3 @@
-// components/DailyDose.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -36,7 +35,6 @@ const DailyDose: React.FC = () => {
 
   const fetchNewQuote = async () => {
     setIsLoading(true);
-    // Simulate API call delay
     setTimeout(() => {
       setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
       setIsLoading(false);
@@ -102,13 +100,16 @@ const DailyDose: React.FC = () => {
           <h3 className="text-xl font-bold text-white">Today's Playlist</h3>
         </div>
         <div className="bg-black/30 rounded-lg p-4 text-center">
-          <div className="text-4xl mb-2">🎵</div>
-          <p className="text-pink-200">
-            Your favorite songs to keep you company
-          </p>
-          <p className="text-sm text-pink-300 mt-2">
-            (Spotify embed would go here)
-          </p>
+          <iframe
+            src="https://open.spotify.com/embed/playlist/4mjSqHg0dBAyx07ZQz0Te4?si=c90b75b745da4f18"
+            width="100%"
+            height="380"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            title="Spotify Playlist"
+            className="rounded-lg"
+          />
         </div>
       </motion.div>
     </motion.div>

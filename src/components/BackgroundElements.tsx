@@ -24,13 +24,24 @@ export const BackgroundDecoration: React.FC = () => {
 
 export const FloatingHearts: React.FC = () => {
   const [clientOnly, setClientOnly] = useState(false);
+  const [windowSize, setWindowSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
   useEffect(() => {
-    // Trigger re-render on client
     setClientOnly(true);
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (!clientOnly) return null;
+  if (!clientOnly || !windowSize) return <div />;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -39,8 +50,8 @@ export const FloatingHearts: React.FC = () => {
           key={i}
           className="absolute text-pink-300/30"
           initial={{
-            x: Math.random() * window.innerWidth,
-            y: window.innerHeight + 50,
+            x: Math.random() * windowSize.width,
+            y: windowSize.height + 50,
             scale: 0,
           }}
           animate={{

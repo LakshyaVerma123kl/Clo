@@ -1,14 +1,11 @@
-// components/CloserThanYouThink.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Calendar, Gift, Sparkles, Star } from "lucide-react";
 
-// Import types
 import { Mood, Section } from "../app/types";
 
-// Import components
 import WelcomePage from "./WelcomePage";
 import CountdownTimer from "./CountdownTimer";
 import DailyDose from "./DailyDose";
@@ -18,11 +15,11 @@ import Navigation from "./Navigation";
 import { BackgroundDecoration, FloatingHearts } from "./BackgroundElements";
 
 const CloserThanYouThink: React.FC = () => {
-  const [currentSection, setCurrentSection] = useState("welcome");
+  const [currentSection, setCurrentSection] =
+    useState<Section["id"]>("welcome");
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
-  const [isSecretUnlocked] = useState(false); // Set to true to test secret section
+  const [isSecretUnlocked] = useState(false); // toggle true for testing secret
 
-  // Set your target return date here
   const returnDate = "2025-09-01T00:00:00";
 
   const sections: Section[] = [
@@ -33,7 +30,8 @@ const CloserThanYouThink: React.FC = () => {
     { id: "secret", label: "Secret", icon: Star },
   ];
 
-  const renderSection = () => {
+  // Memoize render function to avoid unnecessary recalculations
+  const renderSection = useCallback(() => {
     switch (currentSection) {
       case "welcome":
         return (
@@ -58,7 +56,7 @@ const CloserThanYouThink: React.FC = () => {
           />
         );
     }
-  };
+  }, [currentSection, selectedMood, isSecretUnlocked, returnDate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-800 to-purple-900 relative overflow-hidden">
@@ -73,21 +71,21 @@ const CloserThanYouThink: React.FC = () => {
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-12 min-h-screen flex items-center justify-center relative z-10">
+      <main className="container mx-auto px-6 py-12 min-h-screen flex items-center justify-center relative z-10">
         <div className="w-full max-w-6xl">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={currentSection}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               {renderSection()}
             </motion.div>
           </AnimatePresence>
         </div>
-      </div>
+      </main>
 
       {/* Floating hearts animation */}
       <FloatingHearts />
