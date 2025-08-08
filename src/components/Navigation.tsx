@@ -14,7 +14,6 @@ const Navigation: React.FC<NavigationProps> = ({
   currentSection,
   onSectionChange,
 }) => {
-  // Memoize click handler to avoid unnecessary re-renders on buttons
   const handleClick = useCallback(
     (sectionId: string) => {
       if (sectionId !== currentSection) onSectionChange(sectionId);
@@ -25,18 +24,19 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav
       aria-label="Section navigation"
-      className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
+      className="fixed bottom-[env(safe-area-inset-bottom,1.5rem)] inset-x-4 z-50"
     >
-      <div className="bg-white/10 backdrop-blur-md rounded-full px-6 py-3 border border-white/20 shadow-md">
-        <div className="flex items-center gap-3">
+      <div className="bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/20 shadow-lg">
+        <div className="flex justify-center items-center gap-4 sm:gap-5">
           {sections.map(({ id, icon: Icon, label }) => {
             const isActive = currentSection === id;
             return (
               <button
                 key={id}
                 onClick={() => handleClick(id)}
-                className={`
-                  p-3 rounded-full transition-transform duration-300
+                className={`flex items-center justify-center
+                  w-12 h-12 sm:w-14 sm:h-14 rounded-full
+                  transition-all duration-300
                   focus:outline-none focus:ring-2 focus:ring-pink-400
                   ${
                     isActive
@@ -49,7 +49,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 title={label}
                 type="button"
               >
-                <Icon className="w-5 h-5" aria-hidden="true" />
+                <Icon className="w-6 h-6 sm:w-6 sm:h-6" aria-hidden="true" />
               </button>
             );
           })}

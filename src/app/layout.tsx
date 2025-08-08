@@ -9,7 +9,6 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Closer Than You Think 💕",
   description: "A special app for someone special",
-  themeColor: "#ff6b9d", // ✅ You can keep it here
 };
 
 export const viewport: Viewport = {
