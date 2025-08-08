@@ -48,31 +48,44 @@ const cuteMessages = [
   "Sending you all the warm hugs! 🤗",
 ];
 
-const gifUrls = [
-  "https://media.tenor.com/7WPM3K3MbAwAAAAd/cute-love.gif",
-  "https://media.tenor.com/uQXxMvQSLQEAAAAC/love-hearts.gif",
-  "https://media.tenor.com/3ZPA6_w5v8sAAAAC/puppy-love.gif",
-  "https://media.tenor.com/4tvjWZk8-mcAAAAC/cute-heart.gif",
-  "https://media.tenor.com/ZEEk9nk8H20AAAAC/heart-flowers.gif",
-];
-
 const getRandomItem = <T,>(arr: T[]): T =>
   arr[Math.floor(Math.random() * arr.length)];
+
+const GIPHY_API_KEY = "WrTsVtKDFn4mxnFaAVvMmkRUi70FEtLb";
 
 const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
   const [peeked, setPeeked] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  type GiphyGif = {
+    images: {
+      downsized_medium: {
+        url: string;
+      };
+    };
+  };
 
-  const handlePeek = () => {
+  const handlePeek = async () => {
     if (peeked) return;
-    setGifUrl(getRandomItem(gifUrls));
+
+    try {
+      const res = await fetch(
+        `https://api.giphy.com/v1/gifs/search?q=cute&limit=50&rating=pg&api_key=${GIPHY_API_KEY}`
+      );
+      const data = await res.json();
+      const gifs = data.data as GiphyGif[]; // ✅ Tell TS what the type is
+      const randomGif = getRandomItem(gifs);
+      setGifUrl(randomGif?.images?.downsized_medium?.url || null);
+    } catch (err) {
+      console.error("Failed to fetch Giphy:", err);
+    }
+
     setMessage(getRandomItem(cuteMessages));
     setPeeked(true);
     setConfetti(true);
 
-    setTimeout(() => setConfetti(false), 3000); // confetti disappears after 3s
+    setTimeout(() => setConfetti(false), 3000);
   };
 
   if (!isUnlocked) {
@@ -85,11 +98,7 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
         role="region"
         aria-label="Locked secret section"
       >
-        <div
-          className="text-7xl mb-6"
-          aria-hidden="true"
-          title="Locked section icon"
-        >
+        <div className="text-7xl mb-6" aria-hidden="true">
           🔒
         </div>
         <h2 className="text-3xl font-extrabold text-white mb-4">
@@ -123,7 +132,6 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
                 animate="visible"
                 aria-hidden="true"
               >
-                {/* Simple confetti dots */}
                 {[...Array(30)].map((_, i) => (
                   <motion.span
                     key={i}
@@ -151,12 +159,14 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
               </motion.div>
             )}
 
-            <img
-              src={gifUrl!}
-              alt="Cute love GIF"
-              className="mx-auto rounded-lg max-w-xs shadow-lg"
-              loading="lazy"
-            />
+            {gifUrl && (
+              <img
+                src={gifUrl}
+                alt="Cute love GIF"
+                className="mx-auto rounded-lg max-w-xs shadow-lg"
+                loading="lazy"
+              />
+            )}
             <p className="mt-4 text-pink-100 italic text-lg select-text">
               {message}
             </p>
@@ -166,7 +176,6 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
     );
   }
 
-  // Unlocked section (same as before)
   return (
     <motion.section
       initial="hidden"
@@ -181,12 +190,7 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
         <h2 className="text-4xl font-extrabold text-white">
           Welcome Home! <span aria-hidden="true">🎉</span>
         </h2>
-        <div
-          className="text-7xl"
-          aria-hidden="true"
-          title="Celebration emoji"
-          role="img"
-        >
+        <div className="text-7xl" aria-hidden="true" role="img">
           🎊
         </div>
         <p className="text-xl text-pink-300 leading-relaxed">
@@ -199,11 +203,7 @@ const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
           role="region"
           aria-label="Personal video message placeholder"
         >
-          <div
-            className="text-5xl mb-5"
-            aria-hidden="true"
-            title="Video camera emoji"
-          >
+          <div className="text-5xl mb-5" aria-hidden="true">
             📹
           </div>
           <p className="text-pink-100 font-medium">
