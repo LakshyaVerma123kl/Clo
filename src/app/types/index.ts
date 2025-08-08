@@ -12,6 +12,12 @@ export interface CountdownData {
   minutes: number;
   seconds: number;
 }
+export interface Meme {
+  title: string;
+  url: string;
+  postLink: string;
+  author: string;
+}
 
 export interface CarePackageItem {
   id: string;

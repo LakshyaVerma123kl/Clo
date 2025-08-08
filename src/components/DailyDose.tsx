@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Quote, Music } from "lucide-react";
+import { Sparkles, Quote, Music, Search } from "lucide-react";
 import { Quote as QuoteType } from "../app/types";
 
 const DailyDose: React.FC = () => {
@@ -11,6 +11,9 @@ const DailyDose: React.FC = () => {
     author: "Anonymous",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
   const quotes: QuoteType[] = [
     {
@@ -41,12 +44,21 @@ const DailyDose: React.FC = () => {
     }, 1000);
   };
 
+  const handleSearch = async () => {
+    const res = await fetch(`/api/search-song?q=${searchTerm}`);
+    const data = await res.json();
+    if (data.tracks?.items) {
+      setResults(data.tracks.items);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8"
     >
+      {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
           <Sparkles className="w-8 h-8 text-yellow-400" />
@@ -88,7 +100,7 @@ const DailyDose: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Spotify Section */}
+      {/* Spotify Playlist (Default) */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,6 +123,64 @@ const DailyDose: React.FC = () => {
             className="rounded-lg"
           />
         </div>
+      </motion.div>
+
+      {/* 🔍 Search Songs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Search className="w-6 h-6 text-blue-400" />
+          <h3 className="text-xl font-bold text-white">Search a Song</h3>
+        </div>
+
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search for a song..."
+            className="w-full p-2 rounded bg-white/20 text-white placeholder:text-white/60"
+          />
+          <button
+            onClick={handleSearch}
+            className="px-3 py-2 bg-blue-500/30 hover:bg-blue-500/50 rounded text-white"
+          >
+            Search
+          </button>
+        </div>
+
+        {results.length > 0 && (
+          <ul className="bg-white/10 rounded p-2 space-y-1 max-h-48 overflow-auto text-white">
+            {results.map((track) => (
+              <li
+                key={track.id}
+                className="cursor-pointer hover:bg-white/20 p-2 rounded"
+                onClick={() => setSelectedTrack(track.id)}
+              >
+                🎵 {track.name} – {track.artists[0].name}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {selectedTrack && (
+          <div className="mt-4">
+            <iframe
+              src={`https://open.spotify.com/embed/track/${selectedTrack}`}
+              width="100%"
+              height="380"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              title="Spotify Track"
+              className="rounded-lg"
+            />
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );
