@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+// app/layout.tsx
+
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -7,8 +9,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Closer Than You Think 💕",
   description: "A special app for someone special",
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: "#ff6b9d",
+  themeColor: "#ff6b9d", // ✅ You can keep it here
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

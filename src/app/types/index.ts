@@ -1,3 +1,6 @@
+import { ReactElement } from "react";
+
+// types/index.ts
 export interface Mood {
   id: string;
   label: string;
@@ -5,9 +8,11 @@ export interface Mood {
   color: string;
 }
 
-export interface Quote {
-  content: string;
-  author: string;
+export interface CountdownData {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 export interface CarePackageItem {
@@ -15,12 +20,17 @@ export interface CarePackageItem {
   title: string;
   type: "meme" | "note" | "tip" | "hug";
   content: string;
-  imageUrl?: string;
+  revealed: boolean;
 }
 
-export interface CountdownData {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
+export interface Quote {
+  content: string;
+  author: string;
+}
+
+export interface Section {
+  id: string;
+  label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any;
 }
