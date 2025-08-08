@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Section } from "../app/types";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 interface NavigationProps {
   sections: Section[];
@@ -35,7 +35,7 @@ const Navigation: React.FC<NavigationProps> = ({
           navigator.vibrate(10);
         }
         onSectionChange(sectionId);
-        setMenuOpen(false); // close menu after selection
+        setMenuOpen(false); // close mobile menu on selection
       }
     },
     [currentSection, onSectionChange, isMobile]
@@ -51,98 +51,75 @@ const Navigation: React.FC<NavigationProps> = ({
     [handleClick]
   );
 
-  const navConfig = {
-    container: isMobile
-      ? "fixed top-4 right-4 z-50"
-      : "fixed right-4 top-1/2 transform -translate-y-1/2 z-50",
-    wrapper: isMobile
-      ? "bg-pink-900 text-white rounded-lg shadow-md"
-      : "bg-white/15 backdrop-blur-lg rounded-xl p-2 border border-white/25 shadow-xl flex flex-col gap-2",
-    buttonContainer: isMobile
-      ? "flex flex-col p-2"
-      : "flex flex-col items-center gap-2",
-    button: {
-      base: `flex items-center justify-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-400 touch-manipulation`,
-      size: isMobile ? "w-full py-2 px-4 text-left rounded-md" : "w-12 h-12",
-      active: isMobile
-        ? "bg-pink-600 text-white"
-        : "bg-pink-500/70 text-white scale-105 shadow-lg",
-      inactive: isMobile
-        ? "hover:bg-pink-700 text-white"
-        : "text-pink-200 hover:text-white hover:bg-white/10 hover:scale-105",
-    },
-    icon: isMobile ? "mr-2 w-5 h-5" : "w-6 h-6",
-  };
-
   return (
-    <nav aria-label="Section navigation" className={navConfig.container}>
+    <nav
+      aria-label="Section navigation"
+      className={`fixed z-50 ${
+        isMobile
+          ? "bottom-4 right-4"
+          : "top-1/2 right-4 transform -translate-y-1/2"
+      }`}
+    >
       {isMobile ? (
-        <div>
+        <div className="relative">
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="bg-pink-600 text-white p-2 rounded-full shadow-md focus:outline-none"
-            aria-label="Toggle navigation menu"
+            className="bg-pink-600 text-white p-3 rounded-full shadow-lg focus:outline-none"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
           >
-            <Menu className="w-6 h-6" />
+            {menuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
 
           {menuOpen && (
-            <div className={navConfig.wrapper}>
-              <div className={navConfig.buttonContainer}>
-                {sections.map(({ id, icon: Icon, label }) => {
-                  const isActive = currentSection === id;
-                  return (
-                    <button
-                      key={id}
-                      onClick={() => handleClick(id)}
-                      onKeyDown={(e) => handleKeyDown(e, id)}
-                      className={`${navConfig.button.base} ${
-                        navConfig.button.size
-                      } ${
-                        isActive
-                          ? navConfig.button.active
-                          : navConfig.button.inactive
-                      }`}
-                      aria-pressed={isActive}
-                      aria-label={label}
-                      title={label}
-                    >
-                      <Icon className={navConfig.icon} aria-hidden="true" />
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
+            <div
+              className="absolute bottom-16 right-0 w-48 bg-pink-900 text-white rounded-lg shadow-xl py-2 flex flex-col gap-1 transition-all"
+              style={{ willChange: "transform, opacity" }}
+            >
+              {sections.map(({ id, icon: Icon, label }) => {
+                const isActive = currentSection === id;
+                return (
+                  <button
+                    key={id}
+                    onClick={() => handleClick(id)}
+                    onKeyDown={(e) => handleKeyDown(e, id)}
+                    className={`flex items-center px-4 py-2 rounded-md transition-all ${
+                      isActive ? "bg-pink-600" : "hover:bg-pink-700 text-white"
+                    }`}
+                    aria-pressed={isActive}
+                  >
+                    <Icon className="w-5 h-5 mr-2" />
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
       ) : (
-        <div className={navConfig.wrapper}>
-          <div className={navConfig.buttonContainer}>
-            {sections.map(({ id, icon: Icon, label }) => {
-              const isActive = currentSection === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => handleClick(id)}
-                  onKeyDown={(e) => handleKeyDown(e, id)}
-                  className={`${navConfig.button.base} ${
-                    navConfig.button.size
-                  } ${
-                    isActive
-                      ? navConfig.button.active
-                      : navConfig.button.inactive
-                  }`}
-                  aria-pressed={isActive}
-                  aria-label={label}
-                  title={label}
-                >
-                  <Icon className={navConfig.icon} aria-hidden="true" />
-                  <span className="sr-only">{label}</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg rounded-xl p-2 flex flex-col gap-2">
+          {sections.map(({ id, icon: Icon, label }) => {
+            const isActive = currentSection === id;
+            return (
+              <button
+                key={id}
+                onClick={() => handleClick(id)}
+                onKeyDown={(e) => handleKeyDown(e, id)}
+                className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-400 ${
+                  isActive
+                    ? "bg-pink-500/70 text-white scale-105 shadow-md"
+                    : "text-pink-200 hover:text-white hover:bg-white/10 hover:scale-105"
+                }`}
+                aria-pressed={isActive}
+                aria-label={label}
+              >
+                <Icon className="w-6 h-6" aria-hidden="true" />
+              </button>
+            );
+          })}
         </div>
       )}
     </nav>
