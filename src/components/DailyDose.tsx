@@ -12,36 +12,32 @@ const DailyDose: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
-
-  const quotes: QuoteType[] = [
-    {
-      content: "Distance means nothing when someone means everything.",
-      author: "Anonymous",
-    },
-    {
-      content:
-        "The best is yet to come when you have someone to share it with.",
-      author: "Unknown",
-    },
-    {
-      content: "Every day apart makes the heart grow fonder.",
-      author: "Proverb",
-    },
-    {
-      content:
-        "You're braver than you believe, stronger than you seem, and smarter than you think.",
-      author: "A.A. Milne",
-    },
-  ];
 
   const fetchNewQuote = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    try {
+      const res = await fetch("/api/quotes");
+      const data = await res.json();
+      if (data?.[0]?.quote) {
+        setQuote({
+          content: data[0].quote,
+          author: data[0].author || "Anonymous",
+        });
+      } else {
+        throw new Error("Invalid response");
+      }
+    } catch (err) {
+      // fallback quote
+      setQuote({
+        content:
+          "You're braver than you believe, stronger than you seem, and smarter than you think.",
+        author: "A.A. Milne",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleSearch = async () => {
@@ -100,7 +96,7 @@ const DailyDose: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Spotify Playlist (Default) */}
+      {/* Spotify Playlist */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -125,7 +121,7 @@ const DailyDose: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* 🔍 Search Songs */}
+      {/* Song Search */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
