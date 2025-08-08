@@ -12,7 +12,7 @@ const DailyDose: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [results, setResults] = useState<any[]>([]);
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
   const fetchNewQuote = async () => {
@@ -20,16 +20,16 @@ const DailyDose: React.FC = () => {
     try {
       const res = await fetch("/api/quotes");
       const data = await res.json();
-      if (data?.[0]?.quote) {
+      if (data?.[0]?.content) {
+        const [quoteText, authorPart] = data[0].content.split("—");
         setQuote({
-          content: data[0].quote,
-          author: data[0].author || "Anonymous",
+          content: quoteText.trim(),
+          author: authorPart?.trim() || "Anonymous",
         });
       } else {
         throw new Error("Invalid response");
       }
     } catch (err) {
-      // fallback quote
       setQuote({
         content:
           "You're braver than you believe, stronger than you seem, and smarter than you think.",
