@@ -1,5 +1,3 @@
-import { ReactElement } from "react";
-
 // types/index.ts
 export interface Mood {
   id: string;
