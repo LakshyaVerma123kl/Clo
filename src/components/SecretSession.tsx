@@ -51,7 +51,7 @@ const cuteMessages = [
 const getRandomItem = <T,>(arr: T[]): T =>
   arr[Math.floor(Math.random() * arr.length)];
 
-const GIPHY_API_KEY = "WrTsVtKDFn4mxnFaAVvMmkRUi70FEtLb";
+const GIPHY_API_KEY = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
 
 const SecretSection: React.FC<SecretSectionProps> = ({ isUnlocked }) => {
   const [peeked, setPeeked] = useState(false);
