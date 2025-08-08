@@ -35,7 +35,7 @@ const Navigation: React.FC<NavigationProps> = ({
           navigator.vibrate(10);
         }
         onSectionChange(sectionId);
-        setMenuOpen(false); // close mobile menu on selection
+        setMenuOpen(false);
       }
     },
     [currentSection, onSectionChange, isMobile]
@@ -75,10 +75,7 @@ const Navigation: React.FC<NavigationProps> = ({
           </button>
 
           {menuOpen && (
-            <div
-              className="absolute bottom-16 right-0 w-48 bg-pink-900 text-white rounded-lg shadow-xl py-2 flex flex-col gap-1 transition-all"
-              style={{ willChange: "transform, opacity" }}
-            >
+            <div className="absolute bottom-16 right-0 w-48 bg-white text-pink-900 rounded-lg shadow-xl py-2 flex flex-col gap-1 transition-all">
               {sections.map(({ id, icon: Icon, label }) => {
                 const isActive = currentSection === id;
                 return (
@@ -87,7 +84,9 @@ const Navigation: React.FC<NavigationProps> = ({
                     onClick={() => handleClick(id)}
                     onKeyDown={(e) => handleKeyDown(e, id)}
                     className={`flex items-center px-4 py-2 rounded-md transition-all ${
-                      isActive ? "bg-pink-600" : "hover:bg-pink-700 text-white"
+                      isActive
+                        ? "bg-pink-100 text-pink-800"
+                        : "hover:bg-pink-50"
                     }`}
                     aria-pressed={isActive}
                   >
@@ -100,7 +99,7 @@ const Navigation: React.FC<NavigationProps> = ({
           )}
         </div>
       ) : (
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg rounded-xl p-2 flex flex-col gap-2">
+        <div className="bg-white border border-pink-200 shadow-lg rounded-xl p-2 flex flex-col gap-2">
           {sections.map(({ id, icon: Icon, label }) => {
             const isActive = currentSection === id;
             return (
@@ -110,8 +109,8 @@ const Navigation: React.FC<NavigationProps> = ({
                 onKeyDown={(e) => handleKeyDown(e, id)}
                 className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-400 ${
                   isActive
-                    ? "bg-pink-500/70 text-white scale-105 shadow-md"
-                    : "text-pink-200 hover:text-white hover:bg-white/10 hover:scale-105"
+                    ? "bg-pink-600 text-white scale-105 shadow-md"
+                    : "text-pink-600 hover:text-pink-800 hover:bg-pink-100 hover:scale-105"
                 }`}
                 aria-pressed={isActive}
                 aria-label={label}
